@@ -109,10 +109,7 @@ def main_page():
         info_label.after(100, update_info_label)
 
     def reset_flags():
-        flags.prohibited_email = False
-        flags.restricted_email = False
         flags.fire_email = False
-        flags.accident_email = False
         flags.started = False
 
     class SlidePanel(ctk.CTkFrame):

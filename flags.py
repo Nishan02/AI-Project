@@ -3,10 +3,7 @@ from docx.shared import Pt
 import datetime
 
 #flags
-prohibited_email = False
-restricted_email = False
 fire_email = False
-accident_email = False
 started = False
 name = "_"
 email = "_"
@@ -26,14 +23,8 @@ def gen_report():
     doc.add_paragraph("")
 
     # Add text based on flags
-    if prohibited_email:
-        doc.add_paragraph("Someone was detected in prohibited area")
     if fire_email:
         doc.add_paragraph("Fire was detected!!")
-    if restricted_email:
-        doc.add_paragraph("People count exceed limit in  restricted time")
-    if accident_email:
-        doc.add_paragraph("An accident was detected!!")
 
     # Save the modified .docx file
     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
