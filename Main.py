@@ -155,8 +155,6 @@ def main_page():
         def video_stream():
             ret, frame = cap.read()
             if is_running and ret:
-                # if switch_var_1.get() == "on":
-                #     face(frame)
                 if switch_var_2.get() == "on":
                     fire(frame)
                     
