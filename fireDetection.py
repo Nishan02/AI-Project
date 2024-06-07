@@ -10,6 +10,7 @@ import winsound
 model = YOLO("assets/models/fireModel.pt")
 classnames = ["fire"]
 
+output_path = "_"
 def beep_alarm():
     for _ in range(3):
         print("ALARM: Fire Detected!")
@@ -32,6 +33,8 @@ def fire_detection(frame):
                             cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2)
                 if not flags.fire_email:
                     timestamp = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+                    global output_path
+                    output_path = "_"
                     output_path = os.path.join(output_folder, f"fire_{timestamp}.jpg")
                     cv2.imwrite(output_path, frame)
                     flags.fire_email = True
