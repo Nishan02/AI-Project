@@ -6,11 +6,20 @@ import threading
 # import send_email
 import flags
 import winsound
+import smtplib
+import ssl
+from email.message import EmailMessage
+import imghdr
+import fireDetection
 
 model = YOLO("assets/models/fireModel.pt")
 classnames = ["fire"]
 
 output_path = "_"
+
+def reset_fire_flag():
+    flags.fire_email = False
+    
 def beep_alarm():
     for _ in range(3):
         print("ALARM: Fire Detected!")
@@ -41,6 +50,49 @@ def fire_detection(frame):
                     message = "Fire Alert"
                     # read(target=send_email, args=[message, output_path]).start()
                     threading.Thread(target=beep_alarm).start()  # Start alarm sound in a new thread
+                    
+                    flags.gen_report()
+                    
+                    # Sending the email
+                    time = datetime.datetime.now().strftime("%H:%M  %a,  %b%y")
+                    email_sender = "dailydiscovery678@gmail.com"
+                    # email_password = os.environ.get('PY_PASS')
+                    email_password = "ygdxmbrzfakreasx"
+                    email_receiver = flags.email
+                    
+                    # Set the subject and body of the email
+                    subject = 'Alert: Fire Detected'
+                    body = f"""
+                    Name: {flags.name}  
+                    Time : {time}
+                                
+                    Detected Events : ->
+                    Fire was detected!!
+                    """
+
+                    em = EmailMessage()
+                    em['From'] = email_sender
+                    em['To'] = email_receiver
+                    em['Subject'] = subject
+                    em.set_content(body)
+
+                    with open(fireDetection.output_path, 'rb') as f:
+                        file_data = f.read()
+                        file_type = imghdr.what(f.name)
+                        file_name = f.name
+                                
+                    em.add_attachment(file_data, maintype='image', subtype=file_type, filename=file_name)
+                                
+                    # Add SSL (layer of security)
+                    context = ssl.create_default_context()
+
+                    # Log in and send the email
+                    with smtplib.SMTP_SSL('smtp.gmail.com', 465, context=context) as smtp:
+                        smtp.login(email_sender, email_password)
+                        smtp.send_message(em)
+                    
+                    threading.Thread(target=reset_fire_flag).start()  # Reset fire_email flag after some delay
+
 
     return frame
 
